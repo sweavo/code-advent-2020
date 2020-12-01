@@ -27,16 +27,23 @@ const find_pair = ( target, input ) => {
 
 
 // Tests
-const test_find_pair = () => {
-    let result = find_pair( 2020, [1721, 979, 366, 299, 675, 1456])
-    console.log(result)
-    return arrayEquals( result, [1721, 299 ] )
-}
+const tests = [
+    {
+        name: "test find_pair",
+        call: () => {
+            let result = find_pair( 2020, [1721, 979, 366, 299, 675, 1456])
+            console.log(result)
+            return arrayEquals( result, [1721, 299 ] )
+        }
+    },
+    {
+        name: "test fix_report",
+        call: () => {
+            return fix_report( [1721, 979, 366, 299, 675, 1456]) == 514579
+        }
+    }
+]
 
-const test_fix_report = () => {
-    return fix_report( [1721, 979, 366, 299, 675, 1456]) == 514579
-}
-
-[ test_find_pair, test_fix_report ].forEach( (f) => { 
-    console.log( f.name + ": " + (f() ? "Pass" : "Fail" ))
+tests.forEach( (f) => { 
+    console.log( f.name + ": " + (f.call() ? "Pass" : "Fail" ))
 } )
