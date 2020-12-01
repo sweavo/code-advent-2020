@@ -47,3 +47,6 @@ const tests = [
 tests.forEach( (f) => { 
     console.log( f.name + ": " + (f.call() ? "Pass" : "Fail" ))
 } )
+
+console.log('Puzzle answer:')
+console.log( fix_report( puzzle_input) )
