@@ -7,7 +7,8 @@ function arrayEquals(a, b) {
       a.length === b.length &&
       a.every((val, index) => val === b[index]);
   }
-  
+
+// The puzzle
 const fix_report = ( input ) => {
     let pair = find_pair( 2020, input )
     return pair[0] * pair[1]
@@ -24,6 +25,8 @@ const find_pair = ( target, input ) => {
     }
 }
 
+
+// Tests
 const test_find_pair = () => {
     let result = find_pair( 2020, [1721, 979, 366, 299, 675, 1456])
     console.log(result)
