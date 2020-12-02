@@ -2,7 +2,7 @@ import re
 import functools
 
 import day2input
-from day2_1 import count_letter, read_password_line, validate_password_line
+from day2_1 import count_letter, read_password_line, validate_password_line, count_valid_password_lines
 
 def extract_letters( idx1, idx2, text ):
     """
@@ -59,5 +59,4 @@ class Policy( object ):
         return 1 == count_letter(self._letter, check_letters )
 
 if __name__ == "__main__":
-    line_validator = functools.partial( validate_password_line, Policy )
-    print( len( list(filter( line_validator, day2input.PASSWORD_FILE ))))
+    print( count_valid_password_lines( Policy, day2input.PASSWORD_FILE ))
