@@ -2,7 +2,7 @@ import re
 import functools
 
 import day2input
-from day2_1 import count_letter, read_password_line, validate_password_line, count_valid_password_lines, Policy as Policy1
+from day2_1 import count_letter, read_password_line, validate_password_line, count_valid_password_lines, BasePolicy
 
 def extract_letters( idx1, idx2, text ):
     """
@@ -14,7 +14,7 @@ def extract_letters( idx1, idx2, text ):
     return text[idx1] + text[idx2]
 
 
-class Policy2( Policy1 ):
+class Policy2( BasePolicy ):
 
     def __init__(self, policy_string ):
         """
@@ -27,8 +27,8 @@ class Policy2( Policy1 ):
             'b'
         """
         super().__init__(policy_string)
-        self._index1 = self._minimum-1 # corrected for zero-based indexes
-        self._index2 = self._maximum-1 # corrected for zero-based indexes
+        self._index1 = self._first-1 # corrected for zero-based indexes
+        self._index2 = self._second-1 # corrected for zero-based indexes
 
     def validate( self, password ):
         """
