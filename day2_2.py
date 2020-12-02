@@ -26,10 +26,9 @@ class Policy2( Policy1 ):
             >>> p._letter
             'b'
         """
-        items = Policy1.split_policystring( policy_string )
-        self._index1 = int(items[0])-1 # corrected for zero-based indexes
-        self._index2 = int(items[1])-1 # corrected for zero-based indexes
-        self._letter = items[2]
+        super().__init__(policy_string)
+        self._index1 = self._minimum-1 # corrected for zero-based indexes
+        self._index2 = self._maximum-1 # corrected for zero-based indexes
 
     def validate( self, password ):
         """
