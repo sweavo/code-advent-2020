@@ -15,23 +15,52 @@ def count_letter( letter, haystack ):
     """
     return haystack.count( letter )
 
-RE_READ_PASSWORD_LINE = re.compile('(\d+)-(\d+)\s+(\w):\s+([^\s]+)')
-def read_password_line( text ):
-    """ take a line from the password file and return the two indices (corrected to be zero-based), letter, and password.
-        >>> read_password_line( '1-2 x: bibble')
-        (0, 1, 'x', 'bibble')
-    """
-    items =  RE_READ_PASSWORD_LINE.match(text).groups()
-    return (int(items[0])-1, int(items[1])-1, items[2], items[3] )
-
-def extract_letters( idx1, idx2, password ):
+def extract_letters( idx1, idx2, text ):
     """
         >>> extract_letters( 0, 3, 'hi there')
         'ht'
         >>> extract_letters( 5, 5, 'abcdef' )
         'ff'
     """
-    return password[idx1] + password[idx2]
+    return text[idx1] + text[idx2]
+
+
+def read_password_line(text):
+    """
+        >>> read_password_line('1-2 z: hello')
+        ('1-2 z', 'hello')
+    """
+    return tuple(map(str.strip,text.split(':')))
+
+
+class Policy( object ):
+
+    RE_READ_POLICY = re.compile('(\d+)-(\d+)\s+(\w)$')
+
+    def __init__(self, policy_string ):
+        """
+            >>> p=Policy('1-3 b')
+            >>> p._index1
+            0
+            >>> p._index2
+            2
+            >>> p._letter
+            'b'
+        """
+        items = self.RE_READ_POLICY.match( policy_string ).groups()
+        self._index1 = int(items[0])-1 # corrected for zero-based indexes
+        self._index2 = int(items[1])-1 # corrected for zero-based indexes
+        self._letter = items[2]
+
+    def validate( self, password ):
+        """
+            >>> Policy('1-3 b').validate( 'abb' )
+            True
+            >>> Policy('1-3 a').validate( 'aaa' )
+            False
+        """
+        check_letters = extract_letters(self._index1, self._index2, password)
+        return 1 == count_letter(self._letter, check_letters )
 
 def validate_password_line( text ):
     """
@@ -55,9 +84,8 @@ def validate_password_line( text ):
         >>> validate_password_line( '1-2 a: aaa' )
         False
     """
-    index1, index2, letter, password = read_password_line(text)
-    return 1 == count_letter(letter, extract_letters(index1, index2, password))
-    
+    policy_string, password = read_password_line(text)
+    return Policy(policy_string).validate( password )
 
 if __name__ == "__main__":
     print( len( list(filter( validate_password_line, day2input.PASSWORD_FILE ))))
