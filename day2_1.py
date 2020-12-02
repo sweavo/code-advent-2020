@@ -16,7 +16,6 @@ def count_letter( letter, haystack ):
     """
     return haystack.count( letter )
 
-
 def read_password_line(text):
     """
         >>> read_password_line('1-2 z: hello')
@@ -27,7 +26,12 @@ def read_password_line(text):
 
 class Policy( object ):
 
-    RE_READ_POLICY = re.compile('(\d+)-(\d+)\s+(\w)$')
+
+    @staticmethod
+    def split_policystring( policy_string ):
+        RE_READ_POLICY = re.compile('(\d+)-(\d+)\s+(\w)$')
+        items = RE_READ_POLICY.match( policy_string ).groups()
+        return (int(items[0]), int(items[1]), items[2])
 
     def __init__(self, policy_string ):
         """
@@ -39,10 +43,7 @@ class Policy( object ):
             >>> p._letter
             'b'
         """
-        items = self.RE_READ_POLICY.match( policy_string ).groups()
-        self._minimum = int(items[0])
-        self._maximum = int(items[1])
-        self._letter = items[2]
+        self._minimum, self._maximum, self._letter = self.split_policystring( policy_string )
 
     def validate( self, password ):
         """
