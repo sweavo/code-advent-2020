@@ -2,7 +2,7 @@ import re
 import functools
 
 import day2input
-from day2_1 import count_letter, read_password_line
+from day2_1 import count_letter, read_password_line, validate_password_line
 
 def extract_letters( idx1, idx2, text ):
     """
@@ -57,13 +57,6 @@ class Policy( object ):
         """
         check_letters = extract_letters(self._index1, self._index2, password)
         return 1 == count_letter(self._letter, check_letters )
-
-def validate_password_line( policy_class, text ):
-    """
-        Rule: exactly one of the two given indices must contain the given letter (1-based!)
-    """
-    policy_string, password = read_password_line(text)
-    return policy_class(policy_string).validate( password )
 
 if __name__ == "__main__":
     line_validator = functools.partial( validate_password_line, Policy )
