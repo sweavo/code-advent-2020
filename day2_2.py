@@ -2,7 +2,7 @@ import re
 import functools
 
 import day2input
-from day2_1 import count_letter, read_password_line, validate_password_line, count_valid_password_lines
+from day2_1 import count_letter, read_password_line, validate_password_line, count_valid_password_lines, Policy as Policy1
 
 def extract_letters( idx1, idx2, text ):
     """
@@ -14,13 +14,11 @@ def extract_letters( idx1, idx2, text ):
     return text[idx1] + text[idx2]
 
 
-class Policy( object ):
-
-    RE_READ_POLICY = re.compile('(\d+)-(\d+)\s+(\w)$')
+class Policy2( Policy1 ):
 
     def __init__(self, policy_string ):
         """
-            >>> p=Policy('1-3 b')
+            >>> p=Policy2('1-3 b')
             >>> p._index1
             0
             >>> p._index2
@@ -28,7 +26,7 @@ class Policy( object ):
             >>> p._letter
             'b'
         """
-        items = self.RE_READ_POLICY.match( policy_string ).groups()
+        items = Policy1.split_policystring( policy_string )
         self._index1 = int(items[0])-1 # corrected for zero-based indexes
         self._index2 = int(items[1])-1 # corrected for zero-based indexes
         self._letter = items[2]
@@ -36,27 +34,27 @@ class Policy( object ):
     def validate( self, password ):
         """
             Rule: exactly one of the two given indices must contain the given letter (1-based!)
-            >>> Policy('1-3 a').validate( 'abc' )
+            >>> Policy2('1-3 a').validate( 'abc' )
             True
-            >>> Policy('1-3 b').validate( 'abb' )
+            >>> Policy2('1-3 b').validate( 'abb' )
             True
-            >>> Policy('1-3 a').validate( 'aaa' )
+            >>> Policy2('1-3 a').validate( 'aaa' )
             False
-            >>> Policy('3-3 a').validate( 'bab' )
+            >>> Policy2('3-3 a').validate( 'bab' )
             False
-            >>> Policy('3-3 b').validate( 'abb' )
+            >>> Policy2('3-3 b').validate( 'abb' )
             False
-            >>> Policy('3-3 a').validate( 'aaa' )
+            >>> Policy2('3-3 a').validate( 'aaa' )
             False
-            >>> Policy('1-2 a').validate( 'ab' )
+            >>> Policy2('1-2 a').validate( 'ab' )
             True
-            >>> Policy('1-2 b').validate( 'abb' )
+            >>> Policy2('1-2 b').validate( 'abb' )
             True
-            >>> Policy('1-2 a').validate( 'aaa' )
+            >>> Policy2('1-2 a').validate( 'aaa' )
             False
         """
         check_letters = extract_letters(self._index1, self._index2, password)
         return 1 == count_letter(self._letter, check_letters )
 
 if __name__ == "__main__":
-    print( count_valid_password_lines( Policy, day2input.PASSWORD_FILE ))
+    print( count_valid_password_lines( Policy2, day2input.PASSWORD_FILE ))

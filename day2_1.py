@@ -26,11 +26,11 @@ def read_password_line(text):
 
 class Policy( object ):
 
+    _RE_READ_POLICY = re.compile('(\d+)-(\d+)\s+(\w)$')
 
-    @staticmethod
-    def split_policystring( policy_string ):
-        RE_READ_POLICY = re.compile('(\d+)-(\d+)\s+(\w)$')
-        items = RE_READ_POLICY.match( policy_string ).groups()
+    @classmethod
+    def split_policystring( cls, policy_string ):
+        items = cls._RE_READ_POLICY.match( policy_string ).groups()
         return (int(items[0]), int(items[1]), items[2])
 
     def __init__(self, policy_string ):
