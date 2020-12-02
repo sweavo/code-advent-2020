@@ -15,14 +15,43 @@ def count_letter( letter, haystack ):
     """
     return haystack.count( letter )
 
-RE_READ_PASSWORD_LINE = re.compile('(\d+)-(\d+)\s+(\w):\s+([^\s]+)')
-def read_password_line( text ):
-    """ take a line from the password file and return min, max, letter, and password.
-        >>> read_password_line( '1-2 x: bibble')
-        (1, 2, 'x', 'bibble')
+
+def read_password_line(text):
     """
-    items =  RE_READ_PASSWORD_LINE.match(text).groups()
-    return (int(items[0]), int(items[1]), items[2], items[3] )
+        >>> read_password_line('1-2 z: hello')
+        ('1-2 z', 'hello')
+    """
+    return tuple(map(str.strip,text.split(':')))
+
+
+class Policy( object ):
+
+    RE_READ_POLICY = re.compile('(\d+)-(\d+)\s+(\w)$')
+
+    def __init__(self, policy_string ):
+        """
+            >>> p=Policy('1-3 b')
+            >>> p._minimum
+            1
+            >>> p._maximum
+            3
+            >>> p._letter
+            'b'
+        """
+        items = self.RE_READ_POLICY.match( policy_string ).groups()
+        self._minimum = int(items[0])
+        self._maximum = int(items[1])
+        self._letter = items[2]
+
+    def validate( self, password ):
+        """
+            >>> Policy('1-3 b').validate( 'abb' )
+            True
+            >>> Policy('1-3 a').validate( 'aaa' )
+            True
+        """
+        letter_count =  count_letter(self._letter, password )
+        return self._minimum<=letter_count and letter_count<=self._maximum
 
 def validate_password_line( text ):
     """
@@ -45,9 +74,8 @@ def validate_password_line( text ):
         >>> validate_password_line( '1-2 a: aaa' )
         False
     """
-    minimum, maximum, letter, password = read_password_line(text)
-    number_of_occurrences = count_letter(letter, password)
-    return minimum <= number_of_occurrences and number_of_occurrences <= maximum
+    policy_string, password = read_password_line(text)
+    return Policy(policy_string).validate( password )
 
 if __name__ == "__main__":
     print( len( list(filter( validate_password_line, day2input.PASSWORD_FILE ))))
