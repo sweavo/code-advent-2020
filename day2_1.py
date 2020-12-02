@@ -75,6 +75,10 @@ def validate_password_line( policy_class, text ):
     policy_string, password = read_password_line(text)
     return policy_class(policy_string).validate( password )
 
+def count_valid_password_lines( policy_class, password_file ):
+    line_validator = functools.partial( validate_password_line, policy_class )
+    iter_valid_lines = filter( line_validator, day2input.PASSWORD_FILE )
+    return len( list(iter_valid_lines))
+
 if __name__ == "__main__":
-    line_validator = functools.partial( validate_password_line, Policy )
-    print( len( list(filter( line_validator, day2input.PASSWORD_FILE ))))
+    print( count_valid_password_lines( Policy, day2input.PASSWORD_FILE ))
