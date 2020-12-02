@@ -46,24 +46,25 @@ class Policy( object ):
 
     def validate( self, password ):
         """
-        >>> Policy('1-3 a').validate( 'ab' )
-        True
-        >>> Policy('1-3 b').validate( 'abb' )
-        True
-        >>> Policy('1-3 a').validate( 'aaa' )
-        True
-        >>> Policy('3-3 a').validate( 'ab' )
-        False
-        >>> Policy('3-3 b').validate( 'abb' )
-        False
-        >>> Policy('3-3 a').validate( 'aaa' )
-        True
-        >>> Policy('1-2 a').validate( 'ab' )
-        True
-        >>> Policy('1-2 b').validate( 'abb' )
-        True
-        >>> Policy('1-2 a').validate( 'aaa' )
-        False
+            Rule: there must be between n and m occurrences of the letter
+            >>> Policy('1-3 a').validate( 'ab' )
+            True
+            >>> Policy('1-3 b').validate( 'abb' )
+            True
+            >>> Policy('1-3 a').validate( 'aaa' )
+            True
+            >>> Policy('3-3 a').validate( 'ab' )
+            False
+            >>> Policy('3-3 b').validate( 'abb' )
+            False
+            >>> Policy('3-3 a').validate( 'aaa' )
+            True
+            >>> Policy('1-2 a').validate( 'ab' )
+            True
+            >>> Policy('1-2 b').validate( 'abb' )
+            True
+            >>> Policy('1-2 a').validate( 'aaa' )
+            False
         """
         letter_count =  count_letter(self._letter, password )
         return self._minimum<=letter_count and letter_count<=self._maximum
