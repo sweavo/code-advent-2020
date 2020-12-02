@@ -35,10 +35,24 @@ class Policy( object ):
 
     def validate( self, password ):
         """
-            >>> Policy('1-3 b').validate( 'abb' )
-            True
-            >>> Policy('1-3 a').validate( 'aaa' )
-            False
+        >>> Policy('1-3 a').validate( 'abc' )
+        True
+        >>> Policy('1-3 b').validate( 'abb' )
+        True
+        >>> Policy('1-3 a').validate( 'aaa' )
+        False
+        >>> Policy('3-3 a').validate( 'bab' )
+        False
+        >>> Policy('3-3 b').validate( 'abb' )
+        False
+        >>> Policy('3-3 a').validate( 'aaa' )
+        False
+        >>> Policy('1-2 a').validate( 'ab' )
+        True
+        >>> Policy('1-2 b').validate( 'abb' )
+        True
+        >>> Policy('1-2 a').validate( 'aaa' )
+        False
         """
         check_letters = extract_letters(self._index1, self._index2, password)
         return 1 == count_letter(self._letter, check_letters )
@@ -46,24 +60,6 @@ class Policy( object ):
 def validate_password_line( policy_class, text ):
     """
         Rule: exactly one of the two given indices must contain the given letter (1-based!)
-        >>> validate_password_line( Policy, '1-3 a: abc' )
-        True
-        >>> validate_password_line( Policy, '1-3 b: abb' )
-        True
-        >>> validate_password_line( Policy, '1-3 a: aaa' )
-        False
-        >>> validate_password_line( Policy, '3-3 a: bab' )
-        False
-        >>> validate_password_line( Policy, '3-3 b: abb' )
-        False
-        >>> validate_password_line( Policy, '3-3 a: aaa' )
-        False
-        >>> validate_password_line( Policy, '1-2 a: ab' )
-        True
-        >>> validate_password_line( Policy, '1-2 b: abb' )
-        True
-        >>> validate_password_line( Policy, '1-2 a: aaa' )
-        False
     """
     policy_string, password = read_password_line(text)
     return policy_class(policy_string).validate( password )
