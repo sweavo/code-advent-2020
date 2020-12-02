@@ -1,19 +1,8 @@
 import re
 
 import day2input
+from day2_1 import count_letter
 
-def count_letter( letter, haystack ):
-    """
-        >>> count_letter( 'a', 'aaa') 
-        3
-        >>> count_letter( 'a', 'abcabc' )
-        2
-        >>> count_letter( 'z', 'puzzle pizza' )
-        4
-        >>> count_letter( 'r','racecar' )
-        2
-    """
-    return haystack.count( letter )
 
 def extract_letters( idx1, idx2, text ):
     """
