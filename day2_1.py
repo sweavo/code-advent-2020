@@ -1,4 +1,5 @@
 import re
+import functools
 
 import day2input
 
@@ -53,29 +54,30 @@ class Policy( object ):
         letter_count =  count_letter(self._letter, password )
         return self._minimum<=letter_count and letter_count<=self._maximum
 
-def validate_password_line( text ):
+def validate_password_line( policy_class, text ):
     """
-        >>> validate_password_line( '1-3 a: ab' )
+        >>> validate_password_line( Policy, '1-3 a: ab' )
         True
-        >>> validate_password_line( '1-3 b: abb' )
+        >>> validate_password_line( Policy, '1-3 b: abb' )
         True
-        >>> validate_password_line( '1-3 a: aaa' )
+        >>> validate_password_line( Policy, '1-3 a: aaa' )
         True
-        >>> validate_password_line( '3-3 a: ab' )
+        >>> validate_password_line( Policy, '3-3 a: ab' )
         False
-        >>> validate_password_line( '3-3 b: abb' )
+        >>> validate_password_line( Policy, '3-3 b: abb' )
         False
-        >>> validate_password_line( '3-3 a: aaa' )
+        >>> validate_password_line( Policy, '3-3 a: aaa' )
         True
-        >>> validate_password_line( '1-2 a: ab' )
+        >>> validate_password_line( Policy, '1-2 a: ab' )
         True
-        >>> validate_password_line( '1-2 b: abb' )
+        >>> validate_password_line( Policy, '1-2 b: abb' )
         True
-        >>> validate_password_line( '1-2 a: aaa' )
+        >>> validate_password_line( Policy, '1-2 a: aaa' )
         False
     """
     policy_string, password = read_password_line(text)
-    return Policy(policy_string).validate( password )
+    return policy_class(policy_string).validate( password )
 
 if __name__ == "__main__":
-    print( len( list(filter( validate_password_line, day2input.PASSWORD_FILE ))))
+    line_validator = functools.partial( validate_password_line, Policy )
+    print( len( list(filter( line_validator, day2input.PASSWORD_FILE ))))
