@@ -24,15 +24,20 @@ def read_password_line(text):
     return tuple(map(str.strip,text.split(':')))
 
 
-class Policy( object ):
+class BasePolicy( object ):
 
     _RE_READ_POLICY = re.compile('(\d+)-(\d+)\s+(\w)$')
 
-    @classmethod
-    def split_policystring( cls, policy_string ):
-        items = cls._RE_READ_POLICY.match( policy_string ).groups()
+    @staticmethod
+    def split_policystring( policy_string ):
+        items = BasePolicy._RE_READ_POLICY.match( policy_string ).groups()
         return (int(items[0]), int(items[1]), items[2])
 
+    def __init__( self, policy_string ):
+        self._first, self._second, self._letter = BasePolicy.split_policystring( policy_string )
+
+
+class Policy( BasePolicy ):
     def __init__(self, policy_string ):
         """
             >>> p=Policy('1-3 b')
@@ -43,7 +48,9 @@ class Policy( object ):
             >>> p._letter
             'b'
         """
-        self._minimum, self._maximum, self._letter = self.split_policystring( policy_string )
+        super().__init__( policy_string )
+        self._minimum = self._first
+        self._maximum = self._second
 
     def validate( self, password ):
         """
