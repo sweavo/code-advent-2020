@@ -1,8 +1,7 @@
 import re
 
 import day2input
-from day2_1 import count_letter
-
+from day2_1 import count_letter, read_password_line
 
 def extract_letters( idx1, idx2, text ):
     """
@@ -12,14 +11,6 @@ def extract_letters( idx1, idx2, text ):
         'ff'
     """
     return text[idx1] + text[idx2]
-
-
-def read_password_line(text):
-    """
-        >>> read_password_line('1-2 z: hello')
-        ('1-2 z', 'hello')
-    """
-    return tuple(map(str.strip,text.split(':')))
 
 
 class Policy( object ):
