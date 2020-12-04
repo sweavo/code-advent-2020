@@ -63,17 +63,17 @@ def is_valid( record ):
         """
     return [] == missing_fields( MANDATORY_FIELDS,  record )
 
-def count_valid( records ):
-    """ READS GLOBAL in is_valid
+def count_valid( validation_function, records ):
+    """ 
         >>> test_iterator = map(parse_record, yield_records( DEMO_INPUT) )
-        >>> count_valid( test_iterator )
+        >>> count_valid( is_valid, test_iterator )
         2
         """
-    return len( list( filter( is_valid, records ) ) )
+    return len( list( filter( validation_function, records ) ) )
 
 def day4_1():
     """
         >>> day4_1()
         216
         """
-    return count_valid( map( parse_record, yield_records( DAY4_INPUT ) ) )
+    return count_valid( is_valid, map( parse_record, yield_records( DAY4_INPUT ) ) )
