@@ -53,12 +53,12 @@ def missing_fields( MANDATORY_FIELDS, record ):
         """
     return list( filter( lambda x: x not in record, MANDATORY_FIELDS ) ) 
 
-def is_valid( record ):
+def has_all_mandatory_fields( record ):
     """ READS GLOBAL so that it can be treated as a lambda
         >>> test_data = list(map(parse_record, yield_records( DEMO_INPUT) ) )
-        >>> is_valid( test_data[0] )
+        >>> has_all_mandatory_fields( test_data[0] )
         True
-        >>> is_valid( test_data[3] )
+        >>> has_all_mandatory_fields( test_data[3] )
         False
         """
     return [] == missing_fields( MANDATORY_FIELDS,  record )
@@ -66,7 +66,7 @@ def is_valid( record ):
 def count_valid( validation_function, records ):
     """ 
         >>> test_iterator = map(parse_record, yield_records( DEMO_INPUT) )
-        >>> count_valid( is_valid, test_iterator )
+        >>> count_valid( has_all_mandatory_fields, test_iterator )
         2
         """
     return len( list( filter( validation_function, records ) ) )
@@ -76,4 +76,4 @@ def day4_1():
         >>> day4_1()
         216
         """
-    return count_valid( is_valid, map( parse_record, yield_records( DAY4_INPUT ) ) )
+    return count_valid( has_all_mandatory_fields, map( parse_record, yield_records( DAY4_INPUT ) ) )
