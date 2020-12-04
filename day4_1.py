@@ -71,9 +71,13 @@ def count_valid( validation_function, records ):
         """
     return len( list( filter( validation_function, records ) ) )
 
+def yield_live_records():
+    return map( parse_record, yield_records( DAY4_INPUT ) )
+
 def day4_1():
     """
         >>> day4_1()
         216
         """
-    return count_valid( has_all_mandatory_fields, map( parse_record, yield_records( DAY4_INPUT ) ) )
+    return count_valid( has_all_mandatory_fields, yield_live_records() )
+
