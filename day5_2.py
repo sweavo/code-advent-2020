@@ -33,7 +33,7 @@ def find_the_gap1( values ):
 def day5_2():
     """
         >>> day5_2()
-        0
+        522
         """
     sorted_ints = day5_1.sorted_pass_ids(day5_1.day5input.BOARDING_PASSES)
     return find_the_gap1( sorted_ints )
