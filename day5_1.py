@@ -14,9 +14,12 @@ def seat_code_to_id( code ):
         """
     return int( seat_code_to_binary( code ), 2 )
 
+def sorted_pass_ids( passes ):
+    return sorted( map( seat_code_to_id, passes ) )
+
 def highest( codes ):
     """
         >>> highest( day5input.BOARDING_PASSES )
         888
         """
-    return sorted( map( seat_code_to_id, codes ))[-1]
+    return sorted_pass_ids( codes )[-1]
