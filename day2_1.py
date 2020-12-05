@@ -88,5 +88,5 @@ def count_valid_password_lines( policy_class, password_file ):
     iter_valid_lines = filter( line_validator, day2input.PASSWORD_FILE )
     return len( list(iter_valid_lines))
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     print( count_valid_password_lines( Policy, day2input.PASSWORD_FILE ))

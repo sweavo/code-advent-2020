@@ -28,6 +28,6 @@ def valid_entries( target, entries ):
     """
     return list(filter(lambda x: x<=target, entries ))
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     print( fix_report( day1input.REPORT ) )
 

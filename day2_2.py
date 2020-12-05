@@ -55,5 +55,5 @@ class Policy2( BasePolicy ):
         check_letters = extract_letters(self._index1, self._index2, password)
         return 1 == count_letter(self._letter, check_letters )
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     print( count_valid_password_lines( Policy2, day2input.PASSWORD_FILE ))

@@ -111,3 +111,5 @@ def day4_2():
         """
     return day4_1.count_valid( validate_record, day4_1.yield_live_records() )
 
+if __name__ == "__main__": # pragma: no cover
+    day4_2()

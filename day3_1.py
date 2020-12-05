@@ -64,3 +64,6 @@ def day3_1( ):
         """
     return count_slope( DAY3_INPUT, (3,1) ) 
 
+if __name__ == "__main__": # pragma: no cover
+    day3_1()
+

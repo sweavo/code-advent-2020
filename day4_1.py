@@ -81,3 +81,5 @@ def day4_1():
         """
     return count_valid( has_all_mandatory_fields, yield_live_records() )
 
+if __name__ == "__main__": # pragma: no cover
+    day4_1()

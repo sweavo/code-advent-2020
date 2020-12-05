@@ -25,6 +25,6 @@ def find_triple( target, entries ):
         except TypeError:
             pass
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     print(fix_report_2(2020, day1input.REPORT ))
 

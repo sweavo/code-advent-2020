@@ -23,3 +23,13 @@ def highest( codes ):
         888
         """
     return sorted_pass_ids( codes )[-1]
+
+def day5_1():
+    """
+        >>> day5_1()
+        888
+        """
+    return highest( day5input.BOARDING_PASSES )
+
+if __name__ == "__main__": # pragma: no cover
+    day5_1()

@@ -38,3 +38,6 @@ def day5_2():
     sorted_ints = day5_1.sorted_pass_ids(day5_1.day5input.BOARDING_PASSES)
     return find_the_gap1( sorted_ints )
 
+if __name__ == "__main__": # pragma: no cover
+    day5_2()
+

@@ -25,3 +25,7 @@ def day3_2():
         2265549792
         """
     return tree_product( DAY3_INPUT, SLOPES )
+
+if __name__ == "__main__": # pragma: no cover
+    day3_2()
+
