@@ -1,3 +1,7 @@
+
+test:
+	python -m doctest *.py
+
 coverage:
 	coverage run --source=. -m doctest *.py
 	coverage html
