@@ -60,7 +60,7 @@ def count_slope( map_fragment, slope ):
 def day3_1( ):
     """
         >>> day3_1()
-        0
+        242
         """
     return count_slope( DAY3_INPUT, (3,1) ) 
 
