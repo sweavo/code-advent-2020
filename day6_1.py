@@ -44,7 +44,7 @@ def count_yeses( answers ):
 
 def sum_survey( survey_records ):
     """ total the counts of unique answers given the extracted records 
-    >>> sum_survey( ['abc','abc', 'abc', 'a', 'b' ] )
+    >>> sum_survey( ['abc','a b c', 'ab ac', 'a a a', 'b' ] )
     11
     """
     return sum(map(count_yeses,survey_records))
