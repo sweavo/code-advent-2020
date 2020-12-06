@@ -18,12 +18,12 @@ DEMO_INPUT=[
 MANDATORY_FIELDS= [ 'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid' ]
 
 def yield_records( input_lines ):
+    """ generator funtion to break input into records
+    >>> len(list( yield_records( DEMO_INPUT ) ) )
+    4
+    >>> list( yield_records( DEMO_INPUT ) )[3]
+    'hcl:#cfa07d eyr:2025 pid:166559648 iyr:2011 ecl:brn hgt:59in'
     """
-        >>> len(list( yield_records( DEMO_INPUT ) ) )
-        4
-        >>> list( yield_records( DEMO_INPUT ) )[3]
-        'hcl:#cfa07d eyr:2025 pid:166559648 iyr:2011 ecl:brn hgt:59in'
-        """
     buffer = ""
     for line in input_lines:
         if "" == line:
@@ -35,40 +35,40 @@ def yield_records( input_lines ):
         yield buffer[1:]
 
 def parse_record( record_string ):
+    """from string separated by space and : into a dict
+    >>> parse_record( 'ecl:brn pid:760753108' )
+    {'ecl': 'brn', 'pid': '760753108'}
     """
-        >>> parse_record( 'ecl:brn pid:760753108' )
-        {'ecl': 'brn', 'pid': '760753108'}
-        """
     return dict( map( lambda r: r.split(':'), record_string.split(' ') ) )
 
 def missing_fields( MANDATORY_FIELDS, record ):
     """
-        >>> test_data = list(map(parse_record, yield_records( DEMO_INPUT) ) )
-        >>> missing_fields( MANDATORY_FIELDS, test_data[0] )
-        []
-        >>> missing_fields( MANDATORY_FIELDS, test_data[2] )
-        []
-        >>> missing_fields( MANDATORY_FIELDS, test_data[3] )
-        ['byr']
-        """
+    >>> test_data = list(map(parse_record, yield_records( DEMO_INPUT) ) )
+    >>> missing_fields( MANDATORY_FIELDS, test_data[0] )
+    []
+    >>> missing_fields( MANDATORY_FIELDS, test_data[2] )
+    []
+    >>> missing_fields( MANDATORY_FIELDS, test_data[3] )
+    ['byr']
+    """
     return list( filter( lambda x: x not in record, MANDATORY_FIELDS ) ) 
 
 def has_all_mandatory_fields( record ):
     """ READS GLOBAL so that it can be treated as a lambda
-        >>> test_data = list(map(parse_record, yield_records( DEMO_INPUT) ) )
-        >>> has_all_mandatory_fields( test_data[0] )
-        True
-        >>> has_all_mandatory_fields( test_data[3] )
-        False
-        """
+    >>> test_data = list(map(parse_record, yield_records( DEMO_INPUT) ) )
+    >>> has_all_mandatory_fields( test_data[0] )
+    True
+    >>> has_all_mandatory_fields( test_data[3] )
+    False
+    """
     return [] == missing_fields( MANDATORY_FIELDS,  record )
 
 def count_valid( validation_function, records ):
     """ 
-        >>> test_iterator = map(parse_record, yield_records( DEMO_INPUT) )
-        >>> count_valid( has_all_mandatory_fields, test_iterator )
-        2
-        """
+    >>> test_iterator = map(parse_record, yield_records( DEMO_INPUT) )
+    >>> count_valid( has_all_mandatory_fields, test_iterator )
+    2
+    """
     return len( list( filter( validation_function, records ) ) )
 
 def yield_live_records():
@@ -76,10 +76,8 @@ def yield_live_records():
 
 def day4_1():
     """
-        >>> day4_1()
-        216
-        """
+    >>> day4_1()
+    216
+    """
     return count_valid( has_all_mandatory_fields, yield_live_records() )
 
-if __name__ == "__main__": # pragma: no cover
-    day4_1()

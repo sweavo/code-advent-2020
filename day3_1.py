@@ -16,17 +16,17 @@ MAP_FRAGMENT=[
     ".#..#...#.#" ]
 
 def whats_at( map_fragment, x, y ):
+    """read the cell ay x,y from the map implied by fragment map_fragment
+    >>> whats_at( MAP_FRAGMENT, 0, 0 ) 
+    '.'
+    >>> whats_at( MAP_FRAGMENT, 3, 0 ) 
+    '#'
+    >>> whats_at( MAP_FRAGMENT, 14, 0 ) 
+    '#'
+    >>> whats_at( MAP_FRAGMENT, 0, 8 ) 
+    '#'
+    >>> whats_at( MAP_FRAGMENT, 0, 11 ) 
     """
-        >>> whats_at( MAP_FRAGMENT, 0, 0 ) 
-        '.'
-        >>> whats_at( MAP_FRAGMENT, 3, 0 ) 
-        '#'
-        >>> whats_at( MAP_FRAGMENT, 14, 0 ) 
-        '#'
-        >>> whats_at( MAP_FRAGMENT, 0, 8 ) 
-        '#'
-        >>> whats_at( MAP_FRAGMENT, 0, 11 ) 
-        """
     if y >= len(map_fragment):
         return None
     row = map_fragment[y]
@@ -34,10 +34,10 @@ def whats_at( map_fragment, x, y ):
 
 
 def enumerate_slope( map_fragment, dx ,dy ):
+    """Create a string representing all the encounters along a slope
+    >>> enumerate_slope( MAP_FRAGMENT, 3, 1 )
+    '.#.##.####'
     """
-        >>> enumerate_slope( MAP_FRAGMENT, 3, 1 )
-        '.#.##.####'
-        """
     x = 0
     y = 0
     r = '>'
@@ -52,18 +52,15 @@ def enumerate_slope( map_fragment, dx ,dy ):
 
 def count_slope( map_fragment, slope ):
     """
-        >>> count_slope( MAP_FRAGMENT, (3,1) )
-        7
-        """
+    >>> count_slope( MAP_FRAGMENT, (3,1) )
+    7
+    """
     return count_letter('#', enumerate_slope( map_fragment, *slope ) )
 
 def day3_1( ):
     """
-        >>> day3_1()
-        242
-        """
+    >>> day3_1()
+    242
+    """
     return count_slope( DAY3_INPUT, (3,1) ) 
-
-if __name__ == "__main__": # pragma: no cover
-    day3_1()
 

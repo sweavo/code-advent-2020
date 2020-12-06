@@ -1,5 +1,4 @@
-"""
-I think I can reuse yield_records for this input
+""" I think I can reuse yield_records for this input
 
 >>> res = list(day4_1.yield_records( EXAMPLE_INPUT ) )
 >>> res[1]

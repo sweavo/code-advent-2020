@@ -4,17 +4,17 @@ import day4_1
 
 def in_closed_range( lower, value, upper ):
     """
-        >>> in_closed_range( 1, 0 ,3 )
-        False
-        >>> in_closed_range( 1, 1 ,3 )
-        True
-        >>> in_closed_range( 1, 2 ,3 )
-        True
-        >>> in_closed_range( 1, 3 ,3 )
-        True
-        >>> in_closed_range( 1, 4 ,3 )
-        False
-        """
+    >>> in_closed_range( 1, 0 ,3 )
+    False
+    >>> in_closed_range( 1, 1 ,3 )
+    True
+    >>> in_closed_range( 1, 2 ,3 )
+    True
+    >>> in_closed_range( 1, 3 ,3 )
+    True
+    >>> in_closed_range( 1, 4 ,3 )
+    False
+    """
     return lower <= value and value <= upper
     
 def validate_byr( byr ):
@@ -29,17 +29,17 @@ def validate_eyr( eyr ):
 RE_HGT_SPLIT=re.compile('^(\d+)(in|cm)$')
 def validate_hgt( hgt ):
     """
-        >>> validate_hgt('in')
-        False
-        >>> validate_hgt('60in')
-        True
-        >>> validate_hgt('190cm')
-        True
-        >>> validate_hgt('190in')
-        False
-        >>> validate_hgt('190')
-        False
-        """
+    >>> validate_hgt('in')
+    False
+    >>> validate_hgt('60in')
+    True
+    >>> validate_hgt('190cm')
+    True
+    >>> validate_hgt('190in')
+    False
+    >>> validate_hgt('190')
+    False
+    """
     m = RE_HGT_SPLIT.match(hgt)
     if m is None:
         return False
@@ -55,17 +55,17 @@ def validate_hgt( hgt ):
 RE_HCL_VALID = re.compile('^#[0-fa-f]{6}$')
 def validate_hcl( hcl ):
     """
-        >>> validate_hcl( '#123abc' )
-        True
-        >>> validate_hcl( '#123abz' )
-        False
-        >>> validate_hcl( '123abc' )
-        False
-        >>> validate_hcl( '#123ab' )
-        False
-        >>> validate_hcl( '#123abcd' )
-        False
-        """
+    >>> validate_hcl( '#123abc' )
+    True
+    >>> validate_hcl( '#123abz' )
+    False
+    >>> validate_hcl( '123abc' )
+    False
+    >>> validate_hcl( '#123ab' )
+    False
+    >>> validate_hcl( '#123abcd' )
+    False
+    """
     return RE_HCL_VALID.match(hcl) is not None
 
 def validate_ecl( ecl ):
@@ -95,11 +95,11 @@ def validate_field( key, record ):
 
 def validate_record( record ):
     """
-        >>> validate_record( day4_1.parse_record( 'eyr:1972 cid:100 hcl:#18171d ecl:amb hgt:170 pid:186cm iyr:2018 byr:1926' ) )
-        False
-        >>> validate_record( day4_1.parse_record( 'pid:087499704 hgt:74in ecl:grn iyr:2012 eyr:2030 byr:1980 hcl:#623a2f' ) )
-        True
-        """
+    >>> validate_record( day4_1.parse_record( 'eyr:1972 cid:100 hcl:#18171d ecl:amb hgt:170 pid:186cm iyr:2018 byr:1926' ) )
+    False
+    >>> validate_record( day4_1.parse_record( 'pid:087499704 hgt:74in ecl:grn iyr:2012 eyr:2030 byr:1980 hcl:#623a2f' ) )
+    True
+    """
     return all( [ field in record 
               and validate_field( field, record )
               for field in day4_1.MANDATORY_FIELDS ] )
@@ -111,5 +111,3 @@ def day4_2():
         """
     return day4_1.count_valid( validate_record, day4_1.yield_live_records() )
 
-if __name__ == "__main__": # pragma: no cover
-    day4_2()
