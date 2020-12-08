@@ -31,7 +31,7 @@ I'm rewriting part1 because we now need to care about the number of bags needed.
 RE_FIND_COUNTS=re.compile('(\d+)\s([\w ]+?)\sbags?')
 
 def parse_rule( rule ):
-    """
+    """ convert English rule into a tuple representing the grammar production
     >>> parse_rule( "light red bags contain 1 bright white bag, 2 muted yellow bags." )
     ('light red', {'bright white': 1, 'muted yellow': 2})
     >>> parse_rule( "dark orange bags contain 3 bright white bags, 4 muted yellow bags." )
