@@ -34,6 +34,8 @@ def parse_instruction( instruction ):
 def read_program( iterable ):
     return list(map(parse_instruction,iterable))
 
+STATUS_OK=0
+STATUS_LOOP=1
 def catch_loop( program ):
     """ what was the value of the accumulator when the program revisited an 
     instruction?
@@ -43,9 +45,9 @@ def catch_loop( program ):
     stops, returning the value in the accumulator.
 
     >>> catch_loop(read_program(EXAMPLE_PROGRAM))
-    5
+    (1, 5)
     >>> catch_loop(read_program(EXAMPLE_FIXED))
-    8
+    (0, 8)
     """
     visited = set()
     program_counter=0
@@ -63,7 +65,7 @@ def catch_loop( program ):
         visited.add(program_counter)
         program_counter+=step
 
-    return accumulator
+    return STATUS_OK if program_counter>=out_of_bounds else STATUS_LOOP, accumulator
 
 def day8_1():
     """
@@ -71,5 +73,5 @@ def day8_1():
     2080
     """
     with open('day8input.txt','r') as fp:
-        return catch_loop(read_program(fp))
+        return catch_loop(read_program(fp))[1]
 
