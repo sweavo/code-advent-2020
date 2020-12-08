@@ -42,7 +42,7 @@ def parse_rule( rule ):
     ('faded blue', {})
     """
     key, _sep, tail = rule.partition(' bags contain ')
-    colors = RE_FIND_COUNTS.findall( rule )
+    colors = RE_FIND_COUNTS.findall( tail )
     return key, dict(map(lambda tup: (tup[1],int(tup[0])), colors))
 
 def parse_rules( rules ):
