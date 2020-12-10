@@ -23,9 +23,9 @@ prepare input = List.sort ([0, 3 + maximum input] ++ input)
 
 -- stack machine that consumes input, applying the given function to transform
 -- the stack each time. The return value is the eventual head of the stack. 
-stack_machine stack fn []       = head stack
-stack_machine stack fn (h:tail) = stack_machine (fn h stack) fn tail 
-make_stack_machine = stack_machine []
+_stack_machine stack fn []       = head stack
+_stack_machine stack fn (h:tail) = _stack_machine (fn h stack) fn tail 
+stack_machine = _stack_machine []
 
 -- range_check accepts a range and returns a function that tests whether an 
 -- ordered list is within it.
@@ -47,7 +47,7 @@ day10_2_fn subsequence stack | 0 == length stack = [1] -- first item has one rou
                              | otherwise         = (sum (take (length (tail subsequence)) stack)):stack
 
 day10_2_rule = range_check 3
-day10_2_machine = (make_stack_machine day10_2_fn).(conformingSubsequences [] day10_2_rule).prepare
+day10_2_machine = (stack_machine day10_2_fn).(conformingSubsequences [] day10_2_rule).prepare
 
 tests = [
     behead_until (range_check 4) [0, 2, 3, 5, 7] == [3, 5, 7],
