@@ -2,7 +2,8 @@ import Data.List as List
 
 example1=[ 16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4 ]
 
-example2=[ 28, 33, 18, 42, 31, 14, 46, 20, 48, 47, 24, 23, 49, 45, 19, 38, 39, 11, 1, 32, 25, 35, 8, 17, 7, 9, 4, 2, 34, 10, 3 ]
+example2=[ 28, 33, 18, 42, 31, 14, 46, 20, 48, 47, 24, 23, 49, 45, 19, 38, 39, 
+    11, 1, 32, 25, 35, 8, 17, 7, 9, 4, 2, 34, 10, 3 ]
 
 day10input = [ 38, 23, 31, 16, 141, 2, 124, 25, 37, 147, 86, 150, 99, 75, 81, 
     121, 93, 120, 96, 55, 48, 58, 108, 22, 132, 62, 107, 54, 69, 51, 7, 134, 
@@ -19,6 +20,11 @@ prepare input = List.sort ([0, 3 + maximum input] ++ input)
 -- for each element of the input the number of preceding elements that were 
 -- within the constraint of 3 jolts.  Then we run a stack machine over those
 -- numbers that sums x[i] numbers from the stack and pushes the result.
+
+-- stack machine that consumes input, applying the given function to transform
+-- the stack each time. The return value is the eventual head of the stack. 
+stack_machine fn [] stack       = head stack
+stack_machine fn (h:tail) stack = stack_machine fn tail (fn h stack)
 
 -- range_check accepts a range and returns a function that tests whether an 
 -- ordered list is within it.
@@ -39,9 +45,6 @@ conformingSubsequences cond (h:tail) previous =
 
 
 subsequenceLengths xs = map (\x -> length x - 1) (conformingSubsequences day10_2_rule (prepare xs) [])
-
-stack_machine stack_func (h:tail) stack   = stack_machine stack_func tail (stack_func h stack)
-stack_machine stack_func [] stack         = head stack -- nothing left to consume, answer is on the top of the stack
 
 day10_2_stack_transform h stack | 0 == length stack = [1] -- first item has one route to it
                                 | otherwise         = (sum (take h stack)):stack
