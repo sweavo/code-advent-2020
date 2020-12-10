@@ -40,13 +40,13 @@ conformingSubsequences cond (h:tail) previous =
 
 subsequenceLengths xs = map (\x -> length x - 1) (conformingSubsequences day10_2_rule (prepare xs) [])
 
-routeCount stack_func (0:tail) _       = routeCount stack_func tail [1] -- first item has one route to it
-routeCount stack_func (h:tail) stack   = routeCount stack_func tail (stack_func h stack)
-routeCount stack_func [] stack         = head stack -- nothing left to consume, answer is on the top of the stack
+stack_machine stack_func (0:tail) _       = stack_machine stack_func tail [1] -- first item has one route to it
+stack_machine stack_func (h:tail) stack   = stack_machine stack_func tail (stack_func h stack)
+stack_machine stack_func [] stack         = head stack -- nothing left to consume, answer is on the top of the stack
 
 day10_2_stack_transform h stack = ((sum (take h stack)):stack)
 
-day10_2_machine input = routeCount day10_2_stack_transform (subsequenceLengths input) []
+day10_2_machine input = stack_machine day10_2_stack_transform (subsequenceLengths input) []
 
 tests = [
     behead_until (range_check 4) [0, 2, 3, 5, 7] == [3, 5, 7],
