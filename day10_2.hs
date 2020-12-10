@@ -29,7 +29,6 @@ stack_machine fn (h:tail) stack = stack_machine fn tail (fn h stack)
 -- range_check accepts a range and returns a function that tests whether an 
 -- ordered list is within it.
 range_check range xs = last xs - head xs <= range
-day10_2_rule = range_check 3
 
 -- return a list that matches condition, removing elements from the head as 
 -- necessary.
@@ -37,8 +36,8 @@ behead_until cond items | cond items = items
                         | otherwise  = behead_until cond (drop 1 items)
 
 -- For each element in list, return the list ending at that element that 
--- satisfies condition.
-conformingSubsequences cond [] _ = [] -- to prevent the compiler complaining. It's likely a problem if you hit this case.
+-- satisfies condition cond.
+conformingSubsequences cond [] _ = []
 conformingSubsequences cond (h:tail) previous = 
     let candidate = behead_until cond (previous ++ [h])
     in candidate:conformingSubsequences cond tail candidate
@@ -49,6 +48,7 @@ subsequenceLengths xs = map (\x -> length x - 1) (conformingSubsequences day10_2
 day10_2_stack_transform h stack | 0 == length stack = [1] -- first item has one route to it
                                 | otherwise         = (sum (take h stack)):stack
 
+day10_2_rule = range_check 3
 day10_2_machine input = stack_machine day10_2_stack_transform (subsequenceLengths input) []
 
 tests = [
