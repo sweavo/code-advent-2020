@@ -49,10 +49,12 @@ conformant_subseqs = _conformant_subseqs []
 day10_2_rule = range_check 3
 
 -- how to use the length of a subsequence to sum previously-calculated counts
-day10_2_fn xs stack | 0 == length stack = [1] -- first item has one route to it.
-                    | otherwise         = (sum (take ((length.tail) xs) stack)):stack
+day10_2_fn xs stack | [] == stack = [1] -- first item has one route to it.
+                    | otherwise   = sum (take ((length.tail) xs) stack):stack
 
-day10_2_machine = (stack_machine day10_2_fn).(conformant_subseqs day10_2_rule).prepare
+day10_2_machine = (stack_machine day10_2_fn)
+                 .(conformant_subseqs day10_2_rule)
+                 .prepare
 
 tests = [
     behead_until (range_check 4) [0, 2, 3, 5, 7] == [3, 5, 7],
