@@ -43,13 +43,14 @@ conformingSubsequences cond (h:tail) previous =
     in candidate:conformingSubsequences cond tail candidate
 
 
-subsequenceLengths xs = map (\x -> length x - 1) (conformingSubsequences day10_2_rule xs [])
+length_minus_one xs = length xs - 1
+subsequenceLengths xs = map length_minus_one (conformingSubsequences day10_2_rule xs [])
 
-day10_2_stack_transform h stack | 0 == length stack = [1] -- first item has one route to it
-                                | otherwise         = (sum (take h stack)):stack
+day10_2_fn h stack | 0 == length stack = [1] -- first item has one route to it.
+                   | otherwise         = (sum (take h stack)):stack
 
 day10_2_rule = range_check 3
-day10_2_machine = (stack_machine day10_2_stack_transform []).subsequenceLengths.prepare
+day10_2_machine = (stack_machine day10_2_fn []).subsequenceLengths.prepare
 
 tests = [
     behead_until (range_check 4) [0, 2, 3, 5, 7] == [3, 5, 7],
