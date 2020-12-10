@@ -44,10 +44,14 @@ _conformant_subseqs previous cond (h:tail) =
     in candidate:_conformant_subseqs candidate cond tail
 conformant_subseqs = _conformant_subseqs []
 
+-- Now the really puzzle-specific stuff
+
+day10_2_rule = range_check 3
+
+-- how to use the length of a subsequence to sum previously-calculated counts
 day10_2_fn subsequence stack | 0 == length stack = [1] -- first item has one route to it.
                              | otherwise         = (sum (take (length (tail subsequence)) stack)):stack
 
-day10_2_rule = range_check 3
 day10_2_machine = (stack_machine day10_2_fn).(conformant_subseqs day10_2_rule).prepare
 
 tests = [
