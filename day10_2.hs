@@ -37,14 +37,14 @@ behead_until cond items | cond items = items
 
 -- For each element in list, return the list ending at that element that 
 -- satisfies condition cond.
-conformingSubsequences cond [] _ = []
-conformingSubsequences cond (h:tail) previous = 
+conformingSubsequences cond _ [] = [] -- no more input
+conformingSubsequences cond previous (h:tail) = 
     let candidate = behead_until cond (previous ++ [h])
-    in candidate:conformingSubsequences cond tail candidate
+    in candidate:conformingSubsequences cond candidate tail
 
 
 length_minus_one xs = length xs - 1
-subsequenceLengths xs = map length_minus_one (conformingSubsequences day10_2_rule xs [])
+subsequenceLengths xs = map length_minus_one (conformingSubsequences day10_2_rule [] xs )
 
 day10_2_fn h stack | 0 == length stack = [1] -- first item has one route to it.
                    | otherwise         = (sum (take h stack)):stack
@@ -56,8 +56,8 @@ tests = [
     behead_until (range_check 4) [0, 2, 3, 5, 7] == [3, 5, 7],
     behead_until (range_check 5) [0, 2, 3, 5, 7] == [2, 3, 5, 7],
     take 3 ['a','b','c','d'] == ['a','b','c'],
-    conformingSubsequences (range_check 3) [0, 2, 3, 5, 8, 9] [] == [[0], [0,2],[0,2,3],[2,3,5],[5,8],[8,9]],
-    conformingSubsequences (\x -> 3 > length x) [0, 2, 3, 5, 8, 9] [] == [[0], [0,2],[2,3],[3,5],[5,8],[8,9]],
+    conformingSubsequences (range_check 3) [] [0, 2, 3, 5, 8, 9] == [[0], [0,2],[0,2,3],[2,3,5],[5,8],[8,9]],
+    conformingSubsequences (\x -> 3 > length x) [] [0, 2, 3, 5, 8, 9] == [[0], [0,2],[2,3],[3,5],[5,8],[8,9]],
     day10_2_machine example1 == 8,
     day10_2_machine example2 == 19208,
     day10_2_machine day10input == 3543369523456
