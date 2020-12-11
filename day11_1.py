@@ -1,11 +1,5 @@
 import day11input
 
-""" review: it smells bad to do so many string comparisons.  Profiling shows
-    the majority of the time is spend in neighborhood, in the list comprehension
-    there.  But is that because neighborhood is being called too often or because
-    it is too slow?  TODO: try both options and see what happens to the profile
-    """
-
 EXAMPLE_SEATING=[
     "L.LL.LL.LL",
     "LLLLLLL.LL",
@@ -18,155 +12,151 @@ EXAMPLE_SEATING=[
     "L.LLLLLL.L",
     "L.LLLLL.LL" ]
 
-class Grid(object):
-    """ Abstract a 2-d array that provides a default value for out-of-bounds """
-    def __init__(self, rows, default=' ', pad=1 ):
-        self._maxx = len(rows[0])
-        self._maxy = len(rows)
-        self._pad=pad
-        self._oob = default
-        empty_row = default * (self._maxx + 2*pad)
-        ypad = [empty_row] * pad
-        xpad = default * pad
-        self._rows = ypad + [ f'{xpad}{row}{xpad}' for row in rows ] + ypad
+EXPECT1=[
+    "#.##.##.##",
+    "#######.##",
+    "#.#.#..#..",
+    "####.##.##",
+    "#.##.##.##",
+    "#.#####.##",
+    "..#.#.....",
+    "##########",
+    "#.######.#",
+    "#.#####.##" ]
 
-    def cells(self, xmin, ymin, xmax, ymax):
-        """ a faster way to get a rectangle of values from the grid
-        >>> Grid(EXAMPLE_SEATING,' ').cells(0,0,3,3)
-        ['L.L', 'LLL', 'L.L']
-        >>> Grid(EXAMPLE_SEATING,' ',2).cells(-2,-2,1,1)
-        ['   ', '   ', '  L']
-        >>> Grid(EXAMPLE_SEATING,' ',2).cells(8,8,11,11)
-        ['.L ', 'LL ', '   ']
-        """
-        return [row[xmin+self._pad:xmax+self._pad] 
-                for row in self._rows[ymin+self._pad:ymax+self._pad] ]
+EXPECT2=[
+    "#.LL.L#.##",
+    "#LLLLLL.L#",
+    "L.L.L..L..",
+    "#LLL.LL.L#",
+    "#.LL.LL.LL",
+    "#.LLLL#.##",
+    "..L.L.....",
+    "#LLLLLLLL#",
+    "#.LLLLLL.L",
+    "#.#LLLL.##" ]
 
-    def limits(self):
-        return self._maxx, self._maxy
+DECODE = {
+    '.': False,
+    'L': 0,
+    '#': 1 }
 
-    def __repr__(self):
-        """ A little extra to help testing with doctest 
-        >>> Grid(['xox','o o','xox'])
-        Grid(['xox',
-              'o o',
-              'xox'])
-        """
-        preamble = f'{self.__class__.__name__}(['
-        indent = ' ' * len(preamble)
-        return '\n'.join( [
-            (preamble if y == 0 else indent)
-            + repr(row)
-            + (',' if y < self._maxy-1 else '])')
-            for y, row in enumerate(self.cells(0,0,self._maxx,self._maxy)) ] )
-            
+ENCODE = {
+    'False': '.',
+    '0': 'L',
+    '1': '#' }
 
-class WaitingRoom(Grid):
-    def __init__(self, rows):
-        super().__init__(rows, default='.')
+def prepare_input(seating_plan):
+    """ convert sequence of sequence of character to sequence of int. 
 
-    def __eq__(self,other):
-        """ does == work?
-        >>> WaitingRoom(EXAMPLE_SEATING) == WaitingRoom(EXAMPLE_SEATING)
-        True
-        """
-        return self._rows == other._rows
-            
-    def neighborhood(self,x,y):
-        """ Since this is called ~1m times for the soution, TODO optimize?
-        >>> wr = WaitingRoom(EXAMPLE_SEATING)
-        >>> wr.neighborhood(1,1)
-        'L.LLLLL.L'
-        >>> wr.neighborhood(0,0)
-        '....L..LL'
-        """
-        return ''.join( self.cells(x-1,y-1,x+2,y+2) )
+    Only needs doing  once per seating plan.
 
-    def count(self, char):
-        return sum([row.count(char) for row in self._rows])
+    Since False is completely inert in this puzzle, it is used as padding,
+    an entire row's worth at the start and one False between each row. This
+    means that any read out-of-bounds at the left or top returns False.
+    Python takes care of out-of-bounds in the positive direction by truncating
+    the result.
+    
+    This means that for any valid cell, it's also valid to read any
+    cell from above left of it to below right of it.  As we flatten the 
+    "2-d array" into 1 dimension, we return the width dimension to allow 
+    the caller to subsequently navigate by row as well as by column.
+    >>> tup=prepare_input( ['L.L','.#.'])
+    >>> tup[0]
+    3
+    >>> list(tup[1])
+    [False, False, False, False, 0, False, 0, False, False, 1, False]
+     """
+    height = len(seating_plan)
+    width = len(seating_plan[0]) 
+    concat='.'.join([ '.' * width  ] + seating_plan )
+    return width, list(map( DECODE.get, concat ))
 
-def day11_automaton( neighborhood ):
-    """ implement the cellular automaton explained in the puzzle.
-    >>> day11_automaton('....L....')
-    '#'
-    >>> day11_automaton('LLLLLLLLL')
-    '#'
-    >>> day11_automaton('...L#L.L.')
-    '#'
-    >>> day11_automaton('.L.L#L.L.')
-    '#'
-    >>> day11_automaton('LLLL#LLLL')
-    '#'
-    >>> day11_automaton('...###.#.')
-    '#'
-    >>> day11_automaton('.#.###.#.')
-    'L'
-    >>> day11_automaton('#L#L##L#L')
-    'L'
+def prepare_output(width, values):
+    """ Render a seating plan back to list-of-strings, removing padding.
+    >>> list(prepare_output( 3, [False, False, False, False, 0, False, 0, False, False, 1, False] ))
+    ['L.L', '.#.']
+    >>> w,v = prepare_input(EXAMPLE_SEATING)
+    >>> list(prepare_output(w,v))
+    ['L.LL.LL.LL', 'LLLLLLL.LL', 'L.L.L..L..', 'LLLL.LL.LL', 'L.LL.LL.LL', 'L.LLLLL.LL', '..L.L.....', 'LLLLLLLLLL', 'L.LLLLLL.L', 'L.LLLLL.LL']
     """
-    cell = neighborhood[4]
-    if cell == '.':
-        return '.'
-    else:
-        occupied_count = neighborhood.count('#')
-        if cell == 'L' and occupied_count == 0:
-            return '#'
-        elif cell == '#' and occupied_count > 4: #count includes cell
-            return 'L'
+    values =list(values)
+    rows = len(values)//(width+1)
+    for y in range(rows):
+        yield ''.join(map(lambda x: ENCODE[str(x)],
+                            values[ (y+1) * (width+1): (y+2) * (width+1)-1 ])) 
+   
+def day11_1_fn(SPAN, v, i):
+    return sum( v[i-SPAN-1:i-SPAN+2] + v[i-1:i+2] + v[i+SPAN-1:i+SPAN+2] ) - v[i]
+
+def apply_rules( width, values, count_fn, abandon_threshold=4 ):
+    """ given a prepared plan, the rules are very cheap to apply.
+
+    Especially if you forego structured programming and separation of 
+    concerns.  Here I mix calculating the whereabouts of the values, 
+    summing them, and applying the "business rules" of flipping on or off 
+    switches.
+
+    I have to write a whole new list because I don't want to reead my 
+    just-written value as part of the decision for the value below me or 
+    to the right. `append` doesn't seem to be costing me too much right 
+    now.
+    >>> input_list = [False, False, False, False, 0]
+    >>> apply_rules(3, input_list, day11_1_fn)
+    (True, [False, False, False, False, 1])
+    >>> input_list
+    [False, False, False, False, 0]
+    >>> w, v = prepare_input(EXAMPLE_SEATING)
+    >>> _, expect1 = prepare_input(EXPECT1)
+    >>> _, expect2 = prepare_input(EXPECT2)
+    >>> _, out1 = apply_rules( w, v, day11_1_fn )
+    >>> out1 == expect1
+    True
+    >>> _, out2 = apply_rules( w, out1, day11_1_fn )
+    >>> out2 == expect1
+    False
+    >>> out2 == expect2
+    True
+    """
+    SPAN=width+1
+    changed=False
+    result=values[:SPAN] # start with the top padding, untouched
+
+    for index in range(SPAN,len(values)): 
+        # walk through linearly, including the "right padding".
+        value = values[index]
+        if value is False:
+            result.append(False)
         else:
-            return cell
+            count = count_fn(SPAN, values, index )
+            if value == 0 and count == 0:
+                result.append(1)
+                changed=True
+            elif value == 1 and count >= abandon_threshold:
+                result.append(0)
+                changed=True
+            else:
+                result.append(value)
 
-def next_frame(frame, rule):
-    """
-    >>> n = next_frame(WaitingRoom(EXAMPLE_SEATING),day11_automaton)
-    >>> n
-    WaitingRoom(['#.##.##.##',
-                 '#######.##',
-                 '#.#.#..#..',
-                 '####.##.##',
-                 '#.##.##.##',
-                 '#.#####.##',
-                 '..#.#.....',
-                 '##########',
-                 '#.######.#',
-                 '#.#####.##'])
-    >>> next_frame(n,day11_automaton)
-    WaitingRoom(['#.LL.L#.##',
-                 '#LLLLLL.L#',
-                 'L.L.L..L..',
-                 '#LLL.LL.L#',
-                 '#.LL.LL.LL',
-                 '#.LLLL#.##',
-                 '..L.L.....',
-                 '#LLLLLLLL#',
-                 '#.LLLLLL.L',
-                 '#.#LLLL.##'])
+    return (changed, result)
 
+def iterate_until_stable( width, values, count_fn=day11_1_fn, abandon_threshold=4):
     """
-    mx,my = frame.limits()
-    return WaitingRoom([
-        ''.join( [rule(frame.neighborhood(x,y)) for x in range(mx)] )
-        for y in range(my)])
-                
-def iterate_to_stable(frame, rule):
-    """
-    >>> frames=list(iterate_to_stable(WaitingRoom(EXAMPLE_SEATING), day11_automaton))
-    >>> frames[-1].count('#')
+    >>> w, v = prepare_input(EXAMPLE_SEATING)
+    >>> v = iterate_until_stable( w, v )
+    >>> sum(v) 
     37
-    """
-    nn = next_frame(frame,rule)
-    while nn != frame:
-        yield nn
-        frame = nn
-        nn = next_frame(frame,rule)
-
+    """ 
+    changed=True # just to be able to enter the loop
+    while changed:
+        changed, values = apply_rules( width, values, count_fn, abandon_threshold )
+    return values
+    
 def day11_1():
     """
     >>> day11_1()
     2299
     """
-    frames = list(iterate_to_stable(WaitingRoom(day11input.SEATING), day11_automaton))
-    return frames[-1].count('#')
+    w, v = prepare_input(day11input.SEATING)
+    return sum(iterate_until_stable(w, v))
 
-if __name__ == "__main__":
-    print(day11_1())
