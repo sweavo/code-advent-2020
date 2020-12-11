@@ -1,12 +1,5 @@
 import day11input
 
-""" After a very slow result last time, this time I will be using 
-    a small numerical type to represent the grid. 0 is empty chair,
-    1 is occupied chair and False is floor.  False is chosen because 
-    it can be `sum()`med along with integers, but can also be detected
-    by `is False`.
-"""
-
 EXAMPLE_SEATING=[
     "L.LL.LL.LL",
     "LLLLLLL.LL",
@@ -92,8 +85,11 @@ def prepare_output(width, values):
     for y in range(rows):
         yield ''.join(map(lambda x: ENCODE[str(x)],
                             values[ (y+1) * (width+1): (y+2) * (width+1)-1 ])) 
-    
-def apply_rules( width, values ):
+   
+def day11_1_fn(SPAN, v, i):
+    return sum( v[i-SPAN-1:i-SPAN+2] + v[i-1:i+2] + v[i+SPAN-1:i+SPAN+2] ) - v[i]
+
+def apply_rules( width, values, count_fn ):
     """ given a prepared plan, the rules are very cheap to apply.
 
     Especially if you forego structured programming and separation of 
@@ -106,17 +102,17 @@ def apply_rules( width, values ):
     to the right. `append` doesn't seem to be costing me too much right 
     now.
     >>> input_list = [False, False, False, False, 0]
-    >>> apply_rules(3, input_list)
+    >>> apply_rules(3, input_list, day11_1_fn)
     (True, [False, False, False, False, 1])
     >>> input_list
     [False, False, False, False, 0]
     >>> w, v = prepare_input(EXAMPLE_SEATING)
     >>> _, expect1 = prepare_input(EXPECT1)
     >>> _, expect2 = prepare_input(EXPECT2)
-    >>> _, out1 = apply_rules( w, v )
+    >>> _, out1 = apply_rules( w, v, day11_1_fn )
     >>> out1 == expect1
     True
-    >>> _, out2 = apply_rules( w, out1 )
+    >>> _, out2 = apply_rules( w, out1, day11_1_fn )
     >>> out2 == expect1
     False
     >>> out2 == expect2
@@ -132,13 +128,11 @@ def apply_rules( width, values ):
         if value is False:
             result.append(False)
         else:
-            count = sum( values[index-SPAN-1:index-SPAN+2] 
-                        + values[index-1:index+2] 
-                        + values[index+SPAN-1:index+SPAN+2] )
+            count = count_fn(SPAN, values, index )
             if value == 0 and count == 0:
                 result.append(1)
                 changed=True
-            elif value == 1 and count > 4: # count includes this seat
+            elif value == 1 and count >= 4:
                 result.append(0)
                 changed=True
             else:
@@ -155,7 +149,7 @@ def iterate_until_stable( width, values ):
     """ 
     changed=True # just to be able to enter the loop
     while changed:
-        changed, values = apply_rules( width, values )
+        changed, values = apply_rules( width, values, day11_1_fn )
     return values
     
 def day11_1():
