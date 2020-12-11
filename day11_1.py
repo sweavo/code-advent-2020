@@ -42,6 +42,23 @@ class Grid(object):
         else:
             return self._rows[y][x]
 
+    def cells(self, xmin, ymin, xmax, ymax):
+        """ a faster way to get a rectangle of values from the grid
+        >>> Grid(EXAMPLE_SEATING,' ').cells(0,0,3,3)
+        ['L.L', 'LLL', 'L.L']
+        >>> Grid(EXAMPLE_SEATING,' ').cells(-2,-2,1,1)
+        ['   ', '   ', '  L']
+        >>> Grid(EXAMPLE_SEATING,' ').cells(8,8,11,11)
+        ['.L ', 'LL ', '   ']
+        """
+        result_width=xmax-xmin
+        preamble = [ self._oob * result_width ] * max(0, -ymin)
+        prefix = self._oob * max(0, -xmin)
+
+        ymin=max(0,ymin)
+        xmin=max(0,xmin)
+        return preamble + [ prefix + row[xmin:xmax] for row in self._rows[ymin:ymax] ]
+
     def limits(self):
         return self._maxx, self._maxy
 
