@@ -59,32 +59,36 @@ def prepare_input(seating_plan):
     Only needs doing  once per seating plan.
 
     Since False is completely inert in this puzzle, it is used as padding,
-    notionally at the top, right(?) and bottom of the grid before 
-    conversion. This means for any valid cell, it's also valid to read any
+    an entire row's worth at the start and one False between each row. This
+    means that any read out-of-bounds at the left or top returns False.
+    Python takes care of out-of-bounds in the positive direction by truncating
+    the result.
+    
+    This means that for any valid cell, it's also valid to read any
     cell from above left of it to below right of it.  As we flatten the 
-    "2-d array" into 1 dimension, we return the other dimension to allow 
+    "2-d array" into 1 dimension, we return the width dimension to allow 
     the caller to subsequently navigate by row as well as by column.
     >>> tup=prepare_input( ['L.L','.#.'])
     >>> tup[0]
     3
     >>> list(tup[1])
-    [False, False, False, False, 0, False, 0, False, False, 1, False, False, False, False, False, False]
+    [False, False, False, False, 0, False, 0, False, False, 1, False]
      """
     height = len(seating_plan)
     width = len(seating_plan[0]) 
-    concat='.'.join([ '.' * width  ] + seating_plan + ['.' * width ]) + '.'
+    concat='.'.join([ '.' * width  ] + seating_plan )
     return width, list(map( DECODE.get, concat ))
 
 def prepare_output(width, values):
     """ Render a seating plan back to list-of-strings, removing padding.
-    >>> list(prepare_output( 3, [False, False, False, False, 0, False, 0, False, False, 1, False, False, False, False, False, False] ))
+    >>> list(prepare_output( 3, [False, False, False, False, 0, False, 0, False, False, 1, False] ))
     ['L.L', '.#.']
     >>> w,v = prepare_input(EXAMPLE_SEATING)
     >>> list(prepare_output(w,v))
     ['L.LL.LL.LL', 'LLLLLLL.LL', 'L.L.L..L..', 'LLLL.LL.LL', 'L.LL.LL.LL', 'L.LLLLL.LL', '..L.L.....', 'LLLLLLLLLL', 'L.LLLLLL.L', 'L.LLLLL.LL']
     """
     values =list(values)
-    rows = len(values)//(width+1)-2
+    rows = len(values)//(width+1)
     for y in range(rows):
         yield ''.join(map(lambda x: ENCODE[str(x)],
                             values[ (y+1) * (width+1): (y+2) * (width+1)-1 ])) 
@@ -101,11 +105,11 @@ def apply_rules( width, values ):
     just-written value as part of the decision for the value below me or 
     to the right. `append` doesn't seem to be costing me too much right 
     now.
-    >>> input_list = [False, False, False, False, 0, False, False, False]
+    >>> input_list = [False, False, False, False, 0]
     >>> apply_rules(3, input_list)
-    (True, [False, False, False, False, 1, False, False, False])
+    (True, [False, False, False, False, 1])
     >>> input_list
-    [False, False, False, False, 0, False, False, False]
+    [False, False, False, False, 0]
     >>> w, v = prepare_input(EXAMPLE_SEATING)
     >>> _, expect1 = prepare_input(EXPECT1)
     >>> _, expect2 = prepare_input(EXPECT2)
@@ -122,7 +126,7 @@ def apply_rules( width, values ):
     changed=False
     result=values[:SPAN] # start with the top padding, untouched
 
-    for index in range(SPAN,len(values)-(width)): 
+    for index in range(SPAN,len(values)): 
         # walk through linearly, including the "right padding".
         value = values[index]
         if value is False:
@@ -139,8 +143,6 @@ def apply_rules( width, values ):
                 changed=True
             else:
                 result.append(value)
-
-    result.extend(values[index+1:]) # add the bottom padding, untouched
 
     return (changed, result)
 
