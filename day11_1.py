@@ -86,7 +86,8 @@ def prepare_output(width, values):
     values =list(values)
     rows = len(values)//(width+1)-2
     for y in range(rows):
-        yield ''.join(map(lambda x: ENCODE[str(x)],values[ (y+1) * (width+1): (y+2) * (width+1)-1 ])) 
+        yield ''.join(map(lambda x: ENCODE[str(x)],
+                            values[ (y+1) * (width+1): (y+2) * (width+1)-1 ])) 
     
 def apply_rules( width, values ):
     """ given a prepared plan, the rules are very cheap to apply.
@@ -127,7 +128,9 @@ def apply_rules( width, values ):
         if value is False:
             result.append(False)
         else:
-            count = sum( values[index-SPAN-1:index-SPAN+2] + values[index-1:index+2] + values[index+SPAN-1:index+SPAN+2] )
+            count = sum( values[index-SPAN-1:index-SPAN+2] 
+                        + values[index-1:index+2] 
+                        + values[index+SPAN-1:index+SPAN+2] )
             if value == 0 and count == 0:
                 result.append(1)
                 changed=True
