@@ -89,7 +89,7 @@ def prepare_output(width, values):
 def day11_1_fn(SPAN, v, i):
     return sum( v[i-SPAN-1:i-SPAN+2] + v[i-1:i+2] + v[i+SPAN-1:i+SPAN+2] ) - v[i]
 
-def apply_rules( width, values, count_fn ):
+def apply_rules( width, values, count_fn, abandon_threshold=4 ):
     """ given a prepared plan, the rules are very cheap to apply.
 
     Especially if you forego structured programming and separation of 
@@ -132,7 +132,7 @@ def apply_rules( width, values, count_fn ):
             if value == 0 and count == 0:
                 result.append(1)
                 changed=True
-            elif value == 1 and count >= 4:
+            elif value == 1 and count >= abandon_threshold:
                 result.append(0)
                 changed=True
             else:
