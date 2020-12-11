@@ -1,5 +1,11 @@
 import day11input
 
+""" review: it smells bad to do so many string comparisons.  Profiling shows
+    the majority of the time is spend in neighborhood, in the list comprehension
+    there.  But is that because neighborhood is being called too often or because
+    it is too slow?  TODO: try both options and see what happens to the profile
+    """
+
 EXAMPLE_SEATING=[
     "L.LL.LL.LL",
     "LLLLLLL.LL",
@@ -164,3 +170,5 @@ def day11_1():
     frames = list(iterate_to_stable(WaitingRoom(day11input.SEATING), day11_automaton))
     return frames[-1].count('#')
 
+if __name__ == "__main__":
+    print(day11_1())
