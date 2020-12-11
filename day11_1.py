@@ -54,7 +54,17 @@ ENCODE = {
     '1': '#' }
 
 def prepare_input(seating_plan):
-    """ convert sequence of sequence of character to sequence of int
+    """ convert sequence of sequence of character to sequence of int. 
+
+    Only needs doing  once per seating plan.
+
+    Since False is completely inert in this puzzle, it is used as padding, notionally
+    at the top, right(?) and bottom of the grid before conversion. This means for any 
+    valid cell, it's also valid to read any cell from above left of it to below right
+    of it.
+
+    As we flatten the "2-d array" into 1 dimension, we return the other dimension
+    to allow the caller to subsequently navigate by row as well as by column.
     >>> tup=prepare_input( ['L.L','.#.'])
     >>> tup[0]
     3
@@ -67,22 +77,28 @@ def prepare_input(seating_plan):
     return width, list(map( DECODE.get, concat ))
 
 def prepare_output(width, values):
-    """
+    """ Render a seating plan back to list-of-strings, removing padding.
     >>> list(prepare_output( 3, [False, False, False, False, 0, False, 0, False, False, 1, False, False, False, False, False, False] ))
     ['L.L', '.#.']
     >>> w,v = prepare_input(EXAMPLE_SEATING)
     >>> list(prepare_output(w,v))
     ['L.LL.LL.LL', 'LLLLLLL.LL', 'L.L.L..L..', 'LLLL.LL.LL', 'L.LL.LL.LL', 'L.LLLLL.LL', '..L.L.....', 'LLLLLLLLLL', 'L.LLLLLL.L', 'L.LLLLL.LL']
-
     """
     values =list(values)
     rows = len(values)//(width+1)-2
     for y in range(rows):
         yield ''.join(map(lambda x: ENCODE[str(x)],values[ (y+1) * (width+1): (y+2) * (width+1)-1 ])) 
-
     
 def apply_rules( width, values ):
-    """ apply the rules to the totals
+    """ given a prepared plan, the rules are very cheap to apply.
+
+    Especially if you forego structured programming and separation of concerns.  Here I mix
+    calculating the whereabouts of the values, summing them, and applying the "business rules"
+    of flipping on or off switches.
+
+    I have to write a whole new list because I don't want to reead my just-written value as part
+    of the decision for the value below me or to the right. `append` doesn't seem to be costing me
+    too much right now.
     >>> input_list = [False, False, False, False, 0, False, False, False]
     >>> apply_rules(3, input_list)
     (True, [False, False, False, False, 1, False, False, False])
@@ -100,16 +116,16 @@ def apply_rules( width, values ):
     >>> out2 == expect2
     True
     """
-    span=width+1
+    SPAN=width+1
     changed=False
-    result=values[:span]
+    result=values[:SPAN] # start with the top padding, untouched
 
-    for index in range(span,len(values)-(width)):
+    for index in range(SPAN,len(values)-(width)): # walk through linearly, including the "right padding".
         value = values[index]
         if value is False:
             result.append(False)
         else:
-            count = sum( values[index-span-1:index-span+2] + values[index-1:index+2] + values[index+span-1:index+span+2] )
+            count = sum( values[index-SPAN-1:index-SPAN+2] + values[index-1:index+2] + values[index+SPAN-1:index+SPAN+2] )
             if value == 0 and count == 0:
                 result.append(1)
                 changed=True
@@ -119,7 +135,7 @@ def apply_rules( width, values ):
             else:
                 result.append(value)
 
-    result.extend(values[index+1:])
+    result.extend(values[index+1:]) # add the bottom padding, untouched
 
     return (changed, result)
 
