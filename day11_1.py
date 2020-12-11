@@ -140,7 +140,7 @@ def apply_rules( width, values, count_fn, abandon_threshold=4 ):
 
     return (changed, result)
 
-def iterate_until_stable( width, values ):
+def iterate_until_stable( width, values, count_fn=day11_1_fn, abandon_threshold=4):
     """
     >>> w, v = prepare_input(EXAMPLE_SEATING)
     >>> v = iterate_until_stable( w, v )
@@ -149,7 +149,7 @@ def iterate_until_stable( width, values ):
     """ 
     changed=True # just to be able to enter the loop
     while changed:
-        changed, values = apply_rules( width, values, day11_1_fn )
+        changed, values = apply_rules( width, values, count_fn, abandon_threshold )
     return values
     
 def day11_1():
