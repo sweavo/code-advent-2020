@@ -58,13 +58,12 @@ def prepare_input(seating_plan):
 
     Only needs doing  once per seating plan.
 
-    Since False is completely inert in this puzzle, it is used as padding, notionally
-    at the top, right(?) and bottom of the grid before conversion. This means for any 
-    valid cell, it's also valid to read any cell from above left of it to below right
-    of it.
-
-    As we flatten the "2-d array" into 1 dimension, we return the other dimension
-    to allow the caller to subsequently navigate by row as well as by column.
+    Since False is completely inert in this puzzle, it is used as padding,
+    notionally at the top, right(?) and bottom of the grid before 
+    conversion. This means for any valid cell, it's also valid to read any
+    cell from above left of it to below right of it.  As we flatten the 
+    "2-d array" into 1 dimension, we return the other dimension to allow 
+    the caller to subsequently navigate by row as well as by column.
     >>> tup=prepare_input( ['L.L','.#.'])
     >>> tup[0]
     3
@@ -92,13 +91,15 @@ def prepare_output(width, values):
 def apply_rules( width, values ):
     """ given a prepared plan, the rules are very cheap to apply.
 
-    Especially if you forego structured programming and separation of concerns.  Here I mix
-    calculating the whereabouts of the values, summing them, and applying the "business rules"
-    of flipping on or off switches.
+    Especially if you forego structured programming and separation of 
+    concerns.  Here I mix calculating the whereabouts of the values, 
+    summing them, and applying the "business rules" of flipping on or off 
+    switches.
 
-    I have to write a whole new list because I don't want to reead my just-written value as part
-    of the decision for the value below me or to the right. `append` doesn't seem to be costing me
-    too much right now.
+    I have to write a whole new list because I don't want to reead my 
+    just-written value as part of the decision for the value below me or 
+    to the right. `append` doesn't seem to be costing me too much right 
+    now.
     >>> input_list = [False, False, False, False, 0, False, False, False]
     >>> apply_rules(3, input_list)
     (True, [False, False, False, False, 1, False, False, False])
@@ -120,7 +121,8 @@ def apply_rules( width, values ):
     changed=False
     result=values[:SPAN] # start with the top padding, untouched
 
-    for index in range(SPAN,len(values)-(width)): # walk through linearly, including the "right padding".
+    for index in range(SPAN,len(values)-(width)): 
+        # walk through linearly, including the "right padding".
         value = values[index]
         if value is False:
             result.append(False)
