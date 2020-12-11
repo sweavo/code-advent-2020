@@ -73,7 +73,7 @@ class WaitingRoom(Grid):
         return self._rows == other._rows
             
     def neighborhood(self,x,y):
-        """
+        """ Since this is called ~1m times for the soution, TODO optimize?
         >>> wr = WaitingRoom(EXAMPLE_SEATING)
         >>> wr.neighborhood(1,1)
         'L.LLLLL.L'
