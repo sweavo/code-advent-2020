@@ -20,58 +20,27 @@ EXAMPLE_SEATING=[
 
 class Grid(object):
     """ Abstract a 2-d array that provides a default value for out-of-bounds """
-    def __init__(self, rows, default=' ' ):
-        self._rows = rows
+    def __init__(self, rows, default=' ', pad=1 ):
         self._maxx = len(rows[0])
         self._maxy = len(rows)
+        self._pad=pad
         self._oob = default
-
-    def cell(self, x, y):
-        """ The is the __getitem__ method for a Grid, but it takes two 
-        arguments, for two axes. This would either break the python datamodel
-        or mean that the key argument to __getitem__ should be a tuple, which
-        feels a little extra right now.
-        >>> wr = Grid(EXAMPLE_SEATING,'X')
-        >>> wr.cell(0,0)
-        'L'
-        >>> wr.cell(-1,0)
-        'X'
-        """
-        if x < 0 or x >= self._maxx or y < 0 or y >= self._maxy:
-            return self._oob
-        else:
-            return self._rows[y][x]
+        empty_row = default * (self._maxx + 2*pad)
+        ypad = [empty_row] * pad
+        xpad = default * pad
+        self._rows = ypad + [ f'{xpad}{row}{xpad}' for row in rows ] + ypad
 
     def cells(self, xmin, ymin, xmax, ymax):
         """ a faster way to get a rectangle of values from the grid
         >>> Grid(EXAMPLE_SEATING,' ').cells(0,0,3,3)
         ['L.L', 'LLL', 'L.L']
-        >>> Grid(EXAMPLE_SEATING,' ').cells(-2,-2,1,1)
+        >>> Grid(EXAMPLE_SEATING,' ',2).cells(-2,-2,1,1)
         ['   ', '   ', '  L']
-        >>> Grid(EXAMPLE_SEATING,' ').cells(8,8,11,11)
+        >>> Grid(EXAMPLE_SEATING,' ',2).cells(8,8,11,11)
         ['.L ', 'LL ', '   ']
         """
-        result_width=xmax-xmin
-
-        # out of bounds stuff
-        padleft = max(0, -xmin)
-        padtop = max(0, -ymin)
-        padright = max(0, xmax-self._maxx)
-        padbottom = max(0, ymax-self._maxy)
-
-        # clamp the query area
-        ymin=max(0,ymin)
-        xmin=max(0,xmin)
-        xmax=min(self._maxx, xmax)
-        ymax=min(self._maxy, ymax)
-
-        # now calculate paddings 
-        prefix = self._oob * padleft
-        suffix = self._oob * padright
-        preamble = [ self._oob * result_width ] * padtop
-        suffamble = [ self._oob * result_width ] * padbottom
-
-        return preamble + [ prefix + row[xmin:xmax] + suffix for row in self._rows[ymin:ymax] ] + suffamble
+        return [row[xmin+self._pad:xmax+self._pad] 
+                for row in self._rows[ymin+self._pad:ymax+self._pad] ]
 
     def limits(self):
         return self._maxx, self._maxy
@@ -89,7 +58,7 @@ class Grid(object):
             (preamble if y == 0 else indent)
             + repr(row)
             + (',' if y < self._maxy-1 else '])')
-            for y, row in enumerate(self._rows) ] )
+            for y, row in enumerate(self.cells(0,0,self._maxx,self._maxy)) ] )
             
 
 class WaitingRoom(Grid):
