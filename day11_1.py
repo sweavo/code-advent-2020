@@ -111,9 +111,7 @@ class WaitingRoom(Grid):
         >>> wr.neighborhood(0,0)
         '....L..LL'
         """
-        return ''.join( [ self.cell(x+dx,y+dy) 
-                            for dy in range(-1,2) 
-                            for dx in range(-1,2) ] )
+        return ''.join( self.cells(x-1,y-1,x+2,y+2) )
 
     def count(self, char):
         return sum([row.count(char) for row in self._rows])
