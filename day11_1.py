@@ -52,12 +52,26 @@ class Grid(object):
         ['.L ', 'LL ', '   ']
         """
         result_width=xmax-xmin
-        preamble = [ self._oob * result_width ] * max(0, -ymin)
-        prefix = self._oob * max(0, -xmin)
 
+        # out of bounds stuff
+        padleft = max(0, -xmin)
+        padtop = max(0, -ymin)
+        padright = max(0, xmax-self._maxx)
+        padbottom = max(0, ymax-self._maxy)
+
+        # clamp the query area
         ymin=max(0,ymin)
         xmin=max(0,xmin)
-        return preamble + [ prefix + row[xmin:xmax] for row in self._rows[ymin:ymax] ]
+        xmax=min(self._maxx, xmax)
+        ymax=min(self._maxy, ymax)
+
+        # now calculate paddings 
+        prefix = self._oob * padleft
+        suffix = self._oob * padright
+        preamble = [ self._oob * result_width ] * padtop
+        suffamble = [ self._oob * result_width ] * padbottom
+
+        return preamble + [ prefix + row[xmin:xmax] + suffix for row in self._rows[ymin:ymax] ] + suffamble
 
     def limits(self):
         return self._maxx, self._maxy
