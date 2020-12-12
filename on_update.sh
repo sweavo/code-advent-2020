@@ -10,6 +10,13 @@ trap tidy EXIT
 
 touch -t 197001010000 $TMP
 
+if [[ -x clear ]]
+then
+    CLS=clear
+else
+    CLS=cls
+fi
+
 watch="$1"
 shift
 
@@ -18,7 +25,7 @@ do
     if [[ "$watch" -nt "$TMP" ]]
     then
         touch $TMP
-        clear
+        $CLS
         echo "$(date +%T) >> $@"
         "$@" | head -$(( ${LINES-40} - 2 ))
         echo "$? << $@"
