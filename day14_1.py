@@ -39,6 +39,7 @@ def line_parse(line):
         addr=int(lvalue[4:-1])
         return 'mem', addr, int(rvalue)
 
+
 class DockingComputer(object):
     """
     #>>> DockingComputer().run_program(EXAMPLE_DOCKING_PROGRAM).sum_memory()
@@ -58,6 +59,7 @@ class DockingComputer(object):
             elif op == 'mem':
                 elf._mem[a1] = (a2 | elf._masks[0]) & elf._masks[1]
         return elf # for method chaining
+
 
 def day14_1_solver(lines):
     """ helper function
