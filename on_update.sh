@@ -10,7 +10,7 @@ trap tidy EXIT
 
 touch -t 197001010000 $TMP
 
-if [[ -x clear ]]
+if which clear 2>/dev/null 1>&2
 then
     CLS=clear
 else
