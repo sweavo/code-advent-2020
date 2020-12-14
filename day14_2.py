@@ -9,6 +9,7 @@ where each list represents the next bit in the address. When an X is encountered
 we write to both branches, which is what stops it being a tree.
 
 """
+import day14_1
 
 class GlobMemory(object):
     def __init__(elf):
@@ -29,8 +30,6 @@ class GlobMemory(object):
         40
         >>> g['11X'] = 2 # test the globbing
         >>> g['1X0'] = 6
-        >>> g['1X0']
-        0
         >>> g['100']
         6
         >>> g['110']
@@ -39,6 +38,8 @@ class GlobMemory(object):
         0
         >>> g['111'] 
         2
+        >>> g.values()
+        dict_values([40, 6, 2, 6])
         """
         if 'X' in key:
             cut = key.index('X')
@@ -46,6 +47,7 @@ class GlobMemory(object):
             elf[key[:cut] + '1' + key[cut+1:]]=value
 
         else:
+            key=int(key,2)
             elf._memory[key]=value
 
     def __getitem__(elf,key):
@@ -54,7 +56,32 @@ class GlobMemory(object):
         >>> g['10'] = 20
         >>> g['10']
         20
+        >>> g[2] # btw integers are cool too
+        20
         >>> g['11'] # default is zero
         0
         """
+        if isinstance(key,str):
+            key=int(key,2)
         return elf._memory.get(key,0)
+
+    def values(elf):
+        return elf._memory.values()
+
+    @staticmethod
+    def apply_mask(mask, address):
+        """
+        >>> GlobMemory.apply_mask('10X0','0011')
+        '10X1'
+        """
+        def bitdecision(tup):
+            return tup[1] if tup[0]=='0' else tup[0]
+        
+        return ''.join(map(bitdecision, zip(mask, address)))
+
+def run_program(lines):
+    """
+    >>> run_program(()
+    0
+    """
+    mem = 
