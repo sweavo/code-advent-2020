@@ -49,12 +49,7 @@ class DockingComputer(object):
         elf._mem={}
     
     def sum_memory(elf):
-        response = sum(elf._mem.values())
-        print('{0:036b}'.format(elf._masks[0]))
-        print('{0:036b}'.format(elf._masks[1]))
-        print('{0:036b}'.format(response))
-        
-        return response
+        return sum(elf._mem.values())
 
     def run_program(elf, lines):
         for op, a1, a2 in map(line_parse,lines):
@@ -80,7 +75,7 @@ def day14_1_solver(lines):
 def day14_1():
     """
     >>> day14_1()
-    10056808196593
+    10050490168421
     """
     with open('day14input.txt', 'r') as fp:
         return DockingComputer().run_program(fp).sum_memory()
