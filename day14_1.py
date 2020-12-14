@@ -59,4 +59,18 @@ class DockingComputer(object):
                 elf._mem[a1] = a2 | elf._masks[0] & elf._masks[1]
         return elf # for method chaining
 
+def day14_1_solver(lines):
+    """ helper function
+    >>> day14_1_solver(EXAMPLE_DOCKING_PROGRAM)
+    165
+    """
+    return  DockingComputer().run_program(lines).sum_memory()
+
+def day14_1():
+    """
+    >>> day14_1()
+    10056808196593
+    """
+    with open('day14input.txt', 'r') as fp:
+        return DockingComputer().run_program(fp).sum_memory()
 
