@@ -15,9 +15,11 @@ class RecitationGame(object):
             elf._state[number] = elf._turn
             return elf._turn - previous
         else:
+            elf._state[number] = elf._turn
             return 0
     
     def recite(elf, initial_sequence, limit):
+        limit = limit - 1
         for item in initial_sequence:
             if elf._turn >= limit:
                 return next_number
@@ -26,14 +28,14 @@ class RecitationGame(object):
         while True:
             if elf._turn >= limit:
                 return next_number
-            next_number = elf.take_turn(item)
+            next_number = elf.take_turn(next_number)
 
 def play_game(initial, limit):
     """
     >>> play_game([0, 3, 6], 10)
     0
-    >>> play_game([0, 3, 6], 2019)
-    435
+    >>> play_game([0, 3, 6], 2020)
+    436
     """
     rg = RecitationGame()
     return rg.recite(initial, limit)
