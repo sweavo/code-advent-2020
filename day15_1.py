@@ -40,3 +40,9 @@ def play_game(initial, limit):
     rg = RecitationGame()
     return rg.recite(initial, limit)
 
+def day15_1():
+    """
+    >>> day15_1()
+    376
+    """
+    return play_game([5,1,9,18,13,8,0],2020)
