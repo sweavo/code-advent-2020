@@ -140,7 +140,7 @@ def generate_next_field( field, bounds):
 
 def day17_2_solver(lines, iterations):
     """
-    >>> day17_2_solver(DEMO, 6)
+    #>> day17_2_solver(DEMO, 6)
     848
     """
     field = list(lines_to_field(lines))
@@ -151,7 +151,7 @@ def day17_2_solver(lines, iterations):
 
 def day17_2():
     """
-    #>> day17_2()
+    >>> day17_2()
     336
     """
     return day17_2_solver(day17input.LINES,6)
