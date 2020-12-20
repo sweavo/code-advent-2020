@@ -8,24 +8,16 @@ class LEXEME(object):
     def __repr__(self):
         return self._name
 
-OPAR=LEXEME('OPAR')
-CPAR=LEXEME('CPAR')
-
 def lex(expression_text):
     """
     >>> list(lex("3 + 2"))
-    [3, <built-in function add>, 2]
-    >>> OPAR == CPAR
-    False
+    [3, '+', 2]
     >>> list(lex("3 + (2 * 2)"))
-    [3, <built-in function add>, OPAR, 2, <built-in function mul>, 2, CPAR]
+    [3, '+', '(', 2, '*', 2, ')']
     """
     for c in expression_text:
         if c in "0123456789": yield int(c)
-        elif c == '+': yield operator.add
-        elif c == '*': yield operator.mul
-        elif c == '(': yield OPAR
-        elif c == ')': yield CPAR
+        elif c in '+*()': yield c
         elif c == ' ': pass
         else: raise ValueError(f'do not know what to do with "{c}".')
 
@@ -53,12 +45,12 @@ def evaluate(lexeme_iterator):
     for lex in lexeme_iterator:
         if isinstance(lex, int):
             accum = op(accum, lex)
-        elif lex == OPAR:
+        elif lex == '(':
             accum = op(accum, evaluate(lexeme_iterator))
-        elif lex == CPAR:
+        elif lex == ')':
             return accum
-        elif lex in [operator.mul, operator.add]:
-            op=lex
+        elif lex in '+*':
+            op=operator.mul if lex == '*' else operator.add
     return accum
 
 def evaluate_strings(strings):
@@ -70,3 +62,4 @@ def day18_1():
     31142189909908
     """
     return evaluate_strings(day18input.EXPRESSIONS)
+
