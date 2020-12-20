@@ -21,6 +21,9 @@ def lex(expression_text):
         elif c == ' ': pass
         else: raise ValueError(f'do not know what to do with "{c}".')
 
+    while True:
+        yield None
+
 def evaluate(lexeme_iterator):
     """
     >>> evaluate(lex('3 + 2'))
